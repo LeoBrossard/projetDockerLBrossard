@@ -1,0 +1,36 @@
+version: "3.8"
+services:
+  db:
+    image: mysql
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ROOT_PASSWORD=root
+      - MYSQL_DATABASE=tlc
+      - MYSQL_USER=tlc
+      - MYSQL_PASSWORD=tlc
+  etherpad:
+    image: etherpad/etherpad:latest
+    ports:
+      - "9001:9001"
+    volumes:
+      - ./projetDockerLBrossard/api/APIKEY.txt:/opt/etherpad-lite/APIKEY.txt
+  mail:
+    image: bytemark/smtp
+    restart: always
+    ports:
+      - "2525:25"
+  front:
+    image: fronttlc
+    ports:
+      - "8080:80"
+    volumes:
+      - ./server-conf/:/etc/nginx/conf.d
+  back:
+    image: backtlc
+    ports:
+      - "8081:8080"
+    environment:
+      - doodle.internalPadUrl=http://etherpad:9001/
+      - quarkus.datasource.jdbc.url=jdbc:mysql://db:3306/tlc?useUnicode=true&serverTimezone=Europe/Paris
+    restart: always
