@@ -2,35 +2,49 @@ version: "3.8"
 services:
   db:
     image: mysql
-    ports:
-      - "3306:3306"
+    volumes:
+      - ./api/src/main/resources/db/migration/:/docker-entrypoint-initdb.d
+#    ports:
+#      - "3306:3306"
     environment:
       - MYSQL_ROOT_PASSWORD=root
       - MYSQL_DATABASE=tlc
       - MYSQL_USER=tlc
       - MYSQL_PASSWORD=tlc
   etherpad:
-    image: etherpad/etherpad:latest
-    ports:
-      - "9001:9001"
+    image: etherpad/etherpad:1.8
+#    ports:
+#      - "9001:9001"
     volumes:
-      - ./projetDockerLBrossard/api/APIKEY.txt:/opt/etherpad-lite/APIKEY.txt
+      - ./api/APIKEY.txt:/opt/etherpad-lite/APIKEY.txt
   mail:
     image: bytemark/smtp
     restart: always
     ports:
       - "2525:25"
-  front:
-    image: fronttlc
-    ports:
-      - "8080:80"
-    volumes:
-      - ./server-conf/:/etc/nginx/conf.d
-  back:
+  backend:
+    container_name: backend
     image: backtlc
     ports:
-      - "8081:8080"
+      - 8080:8080
+#    environment:
+#      - doodle.internalPadUrl=http://etherpad:9001/
+#      - quarkus.datasource.jdbc.url=jdbc:mysql://db:3306/tlc?useUnicode=true&serverTimezone=Europe/Paris
+    command: ["java", "-jar", "tlcdemoApp-1.0.0-SNAPSHOT-runner.jar", "-Dquarkus.http.host=0.0.0.0", "-Dquarkus.datasource.username=tlc", "-Dquarkus.datasource.password=tlc", "-Dquarkus.datasource.jdbc.url=jdbc:mysql://db:3306/tlc?useUnicode=true&serverTimezone=Europe/Paris", "-Ddoodle.internalPadUrl=http://etherpad:9001/",  "-Ddoodle.externalPadUrl=http://pad.tlc.fr:90/",]
+    restart: always
+  frontend:
+    container_name: frontend
+    image: fronttlc
+    ports:
+      - 90:80
+    volumes:
+      - ./server-conf/nginx-api.conf:/etc/nginx/conf.d/api.conf
+      - ./server-conf/nginx-etherpad.conf:/etc/nginx/conf.d/pad.conf
+      - ./server-conf/nginx-myadmin.conf:/etc/nginx/conf.d/myadmin.conf
+    restart: always
+  myadmin:
+    image: phpmyadmin
+    container_name: myadmin
     environment:
-      - doodle.internalPadUrl=http://etherpad:9001/
-      - quarkus.datasource.jdbc.url=jdbc:mysql://db:3306/tlc?useUnicode=true&serverTimezone=Europe/Paris
+      - PMA_HOST=db
     restart: always
