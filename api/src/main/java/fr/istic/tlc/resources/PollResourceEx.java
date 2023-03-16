@@ -38,7 +38,7 @@ public class PollResourceEx {
 	@ConfigProperty(name = "doodle.internalPadUrl", defaultValue="http://etherpad:9001/")
 	String padUrl = "";
 	// http://etherpad.diverse-team.fr/
-	@ConfigProperty(name = "doodle.externalPadUrl", defaultValue="http://etherpad.diverse-team.fr/")
+	@ConfigProperty(name = "doodle.externalPadUrl", defaultValue="http://pad.tlc.fr:90/")
 	String externalPadUrl = "";
 	@ConfigProperty(name = "doodle.padApiKey")
 	String apikey = "";
