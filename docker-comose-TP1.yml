@@ -1,0 +1,25 @@
+version: "3.7"
+services: 
+    proxy:
+        image: jwilder/nginx-proxy
+        volumes:
+            - /var/run/docker.sock:/tmp/docker.sock
+        ports:
+            - 8081:80
+    worker1: 
+        image: nginx
+        environment:
+            - VIRTUAL_HOST=m
+    worker2: 
+        image: nginx
+        environment:
+            - VIRTUAL_HOST=m
+    worker3: 
+        image: nginx
+        environment:
+            - VIRTUAL_HOST=m
+    worker4: 
+        image: nginx
+        environment:
+            - VIRTUAL_HOST=m
+    
