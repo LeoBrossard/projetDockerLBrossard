@@ -9,6 +9,9 @@ dans le fichier /projetDockerLBrossard
 
 # Travail atteint
 
+## TP1
+DockerFile et docker-compose disponible dans la racine de ce répo. Git
+
 ## Etape 1
 Les deux Dockerfile affin d'exécuter le Back et le Front de l'application sont fonctionnels.
 
